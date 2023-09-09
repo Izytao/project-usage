@@ -1,6 +1,11 @@
 package tools
 
-import "net"
+import (
+	"github.com/ipipdotnet/ipdb-go"
+	"net"
+	"path/filepath"
+	"strings"
+)
 
 // GetIpFromAddr
 // 从一个网络地址（net.Addr）中提取出对应的 IPv4 地址。
@@ -41,4 +46,20 @@ func GetOutboundIP() (net.IP, error) {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	// 提取本地出站 IP 地址
 	return localAddr.IP, nil
+}
+
+// ParseIp 解析ip到城市信息
+func ParseIp(ip string) *ipdb.CityInfo {
+	realPath, err := filepath.Abs("../config")
+	realPath = strings.Replace(realPath+"/city.free.ipdb", "\\", "/", -1)
+	db, err := ipdb.NewCity(realPath)
+	if err != nil {
+		return nil
+	}
+	db.Reload(realPath)
+	c, err := db.FindInfo(ip, "CN")
+	if err != nil {
+		return nil
+	}
+	return c
 }

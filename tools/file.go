@@ -1,6 +1,9 @@
 package tools
 
-import "github.com/gobuffalo/packr/v2"
+import (
+	"github.com/gobuffalo/packr/v2"
+	"os"
+)
 
 // FileGetContent 获取文件内容，可以打包到二进制
 func FileGetContent(file string, targetPath string) string {
@@ -12,4 +15,13 @@ func FileGetContent(file string, targetPath string) string {
 		return str
 	}
 	return content
+}
+
+// IsFileNotExist 判断文件文件夹不存在
+func IsFileNotExist(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		return true, nil
+	}
+	return false, err
 }
